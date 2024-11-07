@@ -1,0 +1,70 @@
+.header-pay-metode{
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.header-metode{
+    height: 100px;
+}
+
+.pilihan{
+    margin-left: 10px;
+}
+
+.header{
+    display: flex;
+}
+
+.header-title{
+    background-color: rgba(49, 49, 209, 0.893);
+    width: 100%;
+}
+
+.title{
+    color: white;
+    font-weight: bold;
+    background-color: transparent;
+}
+
+#comment{
+    width: 300px;
+    height: 100px;
+    padding: 10px;
+    color: #000;
+}
+
+.header-input{
+    display: grid;
+    grid-column: auto;
+    margin-left: 15%;
+}
+
+.button-lanjut{
+    color: white;
+    background-color: #1850A3;
+    font-size: 15px;
+    height: 40px;
+}
+
+.input-number{
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    color: #000;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.bg-blue-500{
+    text-align: center;
+}
+
+.button-Checkout{
+    padding-top: 5px;
+    padding-left: 65px;
+    padding-right: 65px;
+    padding-bottom: 5px;
+    background-color: #1850A3;
+    margin-top: 10px;
+}
