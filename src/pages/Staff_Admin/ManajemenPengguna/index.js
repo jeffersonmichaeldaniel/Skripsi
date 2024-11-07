@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import './index.css';
 
 
+const url = "https://joki-chuang.vercel.app";
 export default function ManajemenPengguna() {
-  const url = "http://localhost:5000";
   const [users, setUsers] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [isAdd, setIsAdd] = useState(false);
@@ -202,7 +202,7 @@ export default function ManajemenPengguna() {
               <th className="border px-4 py-2">Nomor</th>
               {/* <th className="border px-4 py-2">Customer ID</th> */}
               <th className="border px-4 py-2">Nama Pengguna</th>
-              <th className="border px-4 py-2">Alamat</th>
+              <th className="border px-4 py-2">Email</th>
               <th className="border px-4 py-2">Nomor Telp</th>
               <th className="border px-4 py-2">Aksi</th>
             </tr>
@@ -240,7 +240,7 @@ export default function ManajemenPengguna() {
                   <td className="border px-4 py-2">
                     <input
                       type="text"
-                      value={selectedUser.role}
+                      value={selectedUser.phoneNumber}
                       onChange={(e) => {
                         setSelectedUser({
                           ...selectedUser,
@@ -264,7 +264,7 @@ export default function ManajemenPengguna() {
                 <>
                 <TableCell>{item.username}</TableCell>
                 <TableCell>{item.email}</TableCell>
-                <TableCell>{item.role}</TableCell>
+                <TableCell>{item.phoneNumber}</TableCell>
                 <TableCell>
                   <ActionButtons 
                     onEdit={() => handleEdit(item)}
