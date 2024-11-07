@@ -14,32 +14,44 @@ function Checkout() {
   const [accountNumber, setAccountNumber] = useState("");
   const [whatsappNumber, setWhatsappNumber] = useState("");
 
-  const handleLanjutClick = () => {
-    setIsPaymentInfoVisible(true);
+  const handleLanjutClick = (e) => {
+    e.preventDefault();
+    if (!paymentOption || !shippingOption || !address) {
+      alert("Mohon lengkapi semua pilihan metode dan alamat.");
+    } else {
+      setIsPaymentInfoVisible(true);
+    }
   };
 
   const handleCheckout = async () => {
+    if (!paymentOption || !shippingOption || !address || !whatsappNumber || (paymentOption === "banking" && !accountNumber)) {
+      alert("Mohon lengkapi semua informasi yang dibutuhkan.");
+      return;
+    }
+
     const orderData = {
       product: {
-        name: product.name,
-        quantity: product.quantity,
-        price: product.price,
-        total: product.price * product.quantity,
+        image: product?.image,
+        name: product?.name,
+        quantity: product?.quantity,
+        price: product?.price,
+        total: product?.price * product?.quantity,
       },
       paymentOption,
       shippingOption,
       address,
-      accountNumber,
+      accountNumber: paymentOption === "banking" ? accountNumber : "",
       whatsappNumber,
       shippingCost: 10000,
-      totalAmount: product.price * product.quantity + 10000,
+      totalAmount: product?.price * product?.quantity + 10000,
     };
 
     try {
-      const response = await fetch('https://joki-chuang.vercel.app/orders', {
+      const response = await fetch('http://localhost:3000/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          // 'Access-Control-Allow-Origin' : '*'
         },
         body: JSON.stringify(orderData),
       });
@@ -93,11 +105,11 @@ function Checkout() {
           <div className="bg-blue-500 p-4">
             <h2 className="font-semibold mb-2">Informasi Total Produk :</h2>
             <div className="bg-blue-600 p-2 mb-2">
-              Sub Total: Rp.{(product.price * product.quantity).toLocaleString()}
+              Sub Total: Rp.{(product?.price * product?.quantity).toLocaleString()}
             </div>
             <div className="bg-blue-600 p-2 mb-2">Ongkir: Rp. 10.000</div>
             <div className="bg-blue-600 p-2">
-              Total: Rp.{((product.price * product.quantity) + 10000).toLocaleString()}
+              Total: Rp.{((product?.price * product?.quantity) + 10000).toLocaleString()}
             </div>
           </div>
 
@@ -129,7 +141,7 @@ function Checkout() {
                   </div>
                 </div>
                 <div className="header-input">
-                  <textarea id="comment" name="comment" rows="4" cols="50" placeholder="Alamat Pengiriman..." onChange={(e) => setAddress(e.target.value)}></textarea>
+                  <textarea id="comment" name="comment" rows="4" cols="50" placeholder="Alamat Pengiriman..." onChange={(e) => setAddress(e.target.value)} required></textarea>
                   <button className="button-lanjut" type="button" onClick={handleLanjutClick}>
                     Lanjut
                   </button>
@@ -139,11 +151,13 @@ function Checkout() {
           ) : (
             <div className="bg-blue-500 p-4">
               <h3>Informasi Pembayaran</h3>
+              {paymentOption === "banking" && (
+                <div>
+                  <input className="input-number" type="number" placeholder="No Rekening..." onChange={(e) => setAccountNumber(e.target.value)} required />
+                </div>
+              )}
               <div>
-                <input className="input-number" type="number" placeholder="No Rekening..." onChange={(e) => setAccountNumber(e.target.value)} />
-              </div>
-              <div>
-                <input className="input-number" type="number" placeholder="No WhatsApp..." onChange={(e) => setWhatsappNumber(e.target.value)} />
+                <input className="input-number" type="number" placeholder="No WhatsApp..." onChange={(e) => setWhatsappNumber(e.target.value)} required />
               </div>
               <button className="button-Checkout" type="button" onClick={handleCheckout}>Checkout</button>
             </div>
