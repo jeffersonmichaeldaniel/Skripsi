@@ -18,6 +18,14 @@ function EtalaseAdmin() {
   
   // const handleAddProduct = () => {
   // }
+  const handleDashboardAdmin = () => {
+    // Anda bisa menambahkan logika untuk login di sini
+    navigate('/DashboardAdmin'); // Arahkan ke halaman dashboard
+  };
+  const handleTransaksi = () => {
+    // Anda bisa menambahkan logika untuk login di sini
+    navigate('/Transaksi'); // Arahkan ke halaman dashboard
+  };
 
   const items = [
     {
@@ -218,8 +226,8 @@ function EtalaseAdmin() {
         <div className="header-title">
           <h3 className="title">FORM ADMIN</h3>
         </div>
-        <button className="button">Dashboard</button>
-        <button className="button">Transaksi</button>
+        <button className="button" onClick={handleDashboardAdmin}>Dashboard</button>
+        <button className="button" onClick={handleTransaksi}>Transaksi</button>
         <button className="button">Etalase</button>
         <button className="button">Laporan Penjualan</button>
       </header>
