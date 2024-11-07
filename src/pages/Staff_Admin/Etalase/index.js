@@ -158,12 +158,24 @@ function EtalaseAdmin() {
 
   const handleAddProduct = async () => {
     try {
+      let productToAdd = { ...newProduct };
+      if (newProduct.image instanceof File) {
+        const compressedBlob = await compressImage(newProduct.image);
+        const base64Image = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(compressedBlob);
+          ;
+        })
+        productToAdd.image = base64Image;
+      }
+
       const response = await fetch("https://joki-chuang.vercel.app/products", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newProduct),
+        body: JSON.stringify(productToAdd),
       });
 
       if (response.ok) {

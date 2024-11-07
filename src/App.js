@@ -7,9 +7,11 @@ import History from "./pages/Customer/History";
 import Etalase from "./pages/Customer/Etalase";
 import Checkout from "./pages/Customer/Checkout";
 import Checkout2 from "./pages/Customer/Checkout2";
+
 import DashboardAdmin from "./pages/Staff_Admin/DashBoardAdmin";
 import Transaksi from "./pages/Staff_Admin/Transaksi";
 import EtalaseAdmin from "./pages/Staff_Admin/Etalase";
+import ManajemenPengguna from "./pages/Staff_Admin/ManajemenPengguna";
 
 function App() {
   return (
@@ -26,6 +28,7 @@ function App() {
         <Route path='/DashboardAdmin' element={<DashboardAdmin />} />
         <Route path='/Transaksi' element={<Transaksi />} />
         <Route path='/EtalaseAdmin' element={<EtalaseAdmin />} />
+        <Route path="/ManajemenPengguna" element={<ManajemenPengguna />} />
       </Routes>
     </Router>
   );
