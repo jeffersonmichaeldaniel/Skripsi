@@ -19,10 +19,6 @@ html, body {
     align-items: center;
 }
 
-.header-title{
-    margin-right: 55%;
-}
-
 .titlepage{
     color: white;
     margin-top: 20px;
@@ -78,11 +74,9 @@ tr:hover {
     margin-right: 10px;
     width: 50px;
 }
-
 #entries{
-    margin-right: 65%;
+    width: 100%;
 }
-
 .input-search{
     margin-left: 10px;
     margin-right: 10px;
