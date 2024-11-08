@@ -177,7 +177,7 @@ export default function ManajemenPengguna() {
       <div className="flex justify-between items-center mb-8">
         <h2 className="titlepage">Etalase</h2>
       </div>
-      <div className="overflow-x-auto w-full"> 
+      <div className="overflow-auto w-full"> 
         <div className="header-title">
           <h3 className="title">Show</h3>
           <input className="input-angka" />
@@ -205,7 +205,7 @@ export default function ManajemenPengguna() {
             </tr>
           </thead>
           <tbody>
-          {orders?.map((item, index) => (
+          {orders && orders?.map((item, index) => (
             <tr key={item.nomor}>
               <td className="border px-4 py-2">{index+1}</td>
               {isEdit && selectedOrder && selectedOrder._id === item._id ? (
@@ -394,10 +394,10 @@ export default function ManajemenPengguna() {
                 </>
               ) : (
                 <>
-                <TableCell>{item.userId.username}</TableCell>
+                <TableCell>{item.userId?.username}</TableCell>
                 <TableCell>{item.address}</TableCell>
                 <TableCell>{item.phoneNumber}</TableCell>
-                <TableCell>{item.userId.email}</TableCell>
+                <TableCell>{item.userId?.email}</TableCell>
                 <TableCell>{item.metodePembayaran}</TableCell>
                 <TableCell>{item.metodePengiriman}</TableCell>
                 <TableCell>{<div>
