@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
-import './index.css';
+import { useLocation, useNavigate } from "react-router-dom";
+import "./index.css";
 
 function Checkout() {
   const navigate = useNavigate();
@@ -24,41 +24,46 @@ function Checkout() {
   };
 
   const handleCheckout = async () => {
-    if (!paymentOption || !shippingOption || !address || !whatsappNumber || (paymentOption === "banking" && !accountNumber)) {
+    if (
+      !paymentOption ||
+      !shippingOption ||
+      !address ||
+      !whatsappNumber ||
+      (paymentOption === "banking" && !accountNumber)
+    ) {
       alert("Mohon lengkapi semua informasi yang dibutuhkan.");
       return;
     }
 
     const orderData = {
-      product: {
-        image: product?.image,
-        name: product?.name,
-        quantity: product?.quantity,
-        price: product?.price,
-        total: product?.price * product?.quantity,
-      },
-      paymentOption,
-      shippingOption,
+      userId: "67270b4b87ec94d227e63e13", // Ganti dengan user ID yang benar jika tersedia
+      products: [
+        {
+          productId: product?.id, // Ganti dengan ID produk yang sesuai
+          quantity: product?.quantity,
+        },
+      ],
+      metodePengiriman: shippingOption === "delivery" ? "Kirim Ke Alamat" : "Ambil Ditempat",
+      metodePembayaran: paymentOption === "banking" ? "Transaksi Banking" : "COD",
+      phoneNumber: whatsappNumber,
       address,
-      accountNumber: paymentOption === "banking" ? accountNumber : "",
-      whatsappNumber,
-      shippingCost: 10000,
-      totalAmount: product?.price * product?.quantity + 10000,
+      norek: paymentOption === "banking" ? accountNumber : "",
+      ongkir: 5000, // Sesuaikan ongkir sesuai kebutuhan
+      total: product?.price * product?.quantity + 5000,
     };
 
     try {
-      const response = await fetch('http://localhost:3000/orders', {
-        method: 'POST',
+      const response = await fetch("https://joki-chuang.vercel.app/orders", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          // 'Access-Control-Allow-Origin' : '*'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(orderData),
       });
 
       if (response.ok) {
         alert("Pesanan berhasil dibuat!");
-        navigate('/Checkout2');
+        navigate("/Checkout2");
       } else {
         alert("Gagal membuat pesanan. Silakan coba lagi.");
       }
@@ -107,9 +112,9 @@ function Checkout() {
             <div className="bg-blue-600 p-2 mb-2">
               Sub Total: Rp.{(product?.price * product?.quantity).toLocaleString()}
             </div>
-            <div className="bg-blue-600 p-2 mb-2">Ongkir: Rp. 10.000</div>
+            <div className="bg-blue-600 p-2 mb-2">Ongkir: Rp. 5.000</div>
             <div className="bg-blue-600 p-2">
-              Total: Rp.{((product?.price * product?.quantity) + 10000).toLocaleString()}
+              Total: Rp.{((product?.price * product?.quantity) + 5000).toLocaleString()}
             </div>
           </div>
 
