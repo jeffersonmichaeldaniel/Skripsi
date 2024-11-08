@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
 import './index.css';
+import Header from "../Header";
 
 function Transaksi() {
   const navigate = useNavigate();
@@ -13,15 +14,7 @@ function Transaksi() {
   };
   return (
     <div class="background">
-      <header className="header-navbar">
-        <div className="header-title">
-          <h3 className="title">FORM ADMIN</h3>
-        </div>
-        <button className="button" onClick={navigasiDashboardAdmin}>Dashboard</button>
-        <button className="button">Transaksi</button>
-        <button className="button" onClick={navigasiEtalaseAdmin}>Etalase</button>
-        <button className="button">Laporan Penjualan</button>
-      </header>
+      <Header/>
       <div className="line" />
       <h2 class="titlepage">Dashboard</h2>
       <div class="grid grid-cols-3 gap-4">

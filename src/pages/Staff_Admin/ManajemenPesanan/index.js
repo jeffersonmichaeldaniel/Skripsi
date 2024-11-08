@@ -1,42 +1,51 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useParams } from 'react-router-dom';
 import './index.css';
+import Header from "../Header";
 
+const url = "https://joki-chuang.vercel.app";
 
 export default function ManajemenPengguna() {
-  const url = "http://localhost:5000";
-  const [users, setUsers] = useState([]);
+  const navigate = useNavigate()  
+  const [orders, setOrders] = useState([]);
+  const [products, setProducts] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [isAdd, setIsAdd] = useState(false);
-  const [newUser, setNewUser] = useState({
-    name: "",
-    address: "",
-    telp: "",
-  });
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
-  const fetchUsers = async () => {
+  const fetchOrders = async () => {
     try {
-      const response = await fetch(`${url}/users`);
+      const response = await fetch(`${url}/orders/detailed`);
       const data = await response.json();
-      setUsers(data);
+      setOrders(data);
     } catch (error) {
-      console.error("Error fetching Users:", error);
+      console.error("Error fetching Orders:", error);
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch(`${url}/products`);
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      console.error("Error fetching Products:", error);
     }
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchOrders();
+    fetchProducts();
   }, []);
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`${url}/users/${id}`, {
+      const response = await fetch(`${url}/orders/${id}`, {
         method: "DELETE",
       });
       if (response.ok) {
-        fetchUsers();
+        fetchOrders();
         alert("User deleted successfully");
       }
     } catch (error) {
@@ -44,14 +53,17 @@ export default function ManajemenPengguna() {
     }
   };
 
-  const handleEdit = (product) => {
-    setSelectedUser(product);
-    setIsEdit(true);
+  const handleEdit = (item) => {
+    console.log(item);
+    
+    navigate(`/EditPesanan/${item._id}`)
+    // setSelectedOrder(product);
+    // setIsEdit(true);
   };
 
   const handleCancel = () => {
     setIsEdit(false);
-    setSelectedUser(null);
+    setSelectedOrder(null);
   };
 
   const compressImage = (file) => {
@@ -74,10 +86,10 @@ export default function ManajemenPengguna() {
   
   const handleSave = async () => {
     try {
-      let productToUpdate = { ...selectedUser };
+      let productToUpdate = { ...selectedOrder };
       
-      if (selectedUser.image instanceof File) {
-        const compressedBlob = await compressImage(selectedUser.image);
+      if (selectedOrder.image instanceof File) {
+        const compressedBlob = await compressImage(selectedOrder.image);
         const base64Image = await new Promise((resolve) => {
           const reader = new FileReader();
           reader.onloadend = () => resolve(reader.result);
@@ -86,7 +98,7 @@ export default function ManajemenPengguna() {
         productToUpdate.image = base64Image;
       }
   
-      const response = await fetch(`${url}/users/${selectedUser._id}`, {
+      const response = await fetch(`${url}/orders/${selectedOrder._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -95,9 +107,9 @@ export default function ManajemenPengguna() {
       });
       
       if (response.ok) {
-        fetchUsers();
+        fetchOrders();
         setIsEdit(false);
-        setSelectedUser(null);
+        setSelectedOrder(null);
         alert("User updated successfully");
       }
     } catch (error) {
@@ -105,46 +117,35 @@ export default function ManajemenPengguna() {
     }
   };
 
-  const handleAddUser = async () => {
+  const handleUpdateStatus = async (id, status) => {
     try {
-      let productToAdd = { ...newUser };
-      if (newUser.image instanceof File) {
-        const compressedBlob = await compressImage(newUser.image);
-        const base64Image = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result);
-          reader.readAsDataURL(compressedBlob);
-          ;
-        })
-        productToAdd.image = base64Image;
-      }
-
-      const response = await fetch(`${url}/users`, {
-        method: "POST",
+      const response = await fetch(`${url}/orders/${id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(productToAdd),
+        body: JSON.stringify({ status }),
       });
-
       if (response.ok) {
-        fetchUsers();
-        setIsAdd(false);
-        setNewUser({
-          name: "",
-          address: "",
-          telp: "",
-          image: "",
-        });
-        setIsAdd(false);
-        alert("User added successfully");
-      }else {
-        alert("Failed to add product");
+        fetchOrders();
+        alert("Status updated successfully");
       }
     } catch (error) {
-      console.error("Error adding product:", error);
+      console.error("Error updating status:", error);
     }
   };
+
+  const handleAddProduct = () => {
+    if (!selectedOrder) {
+      // Initialize selectedOrder with empty products array if none exists
+      setSelectedOrder({
+        ...selectedOrder,
+        products: []
+      });
+    }
+    setIsAdd(true);
+  };
+  
   
   const TableCell = ({ children, className = "border px-4 py-2" }) => (
     <td className={className}>{children}</td>
@@ -171,15 +172,7 @@ export default function ManajemenPengguna() {
 
   return (
     <div className="background">
-      <header className="header-navbar">
-        <div className="header-title">
-          <h3 className="title">FORM ADMIN</h3>
-        </div>
-        <button className="button">Dashboard</button>
-        <button className="button">Transaksi</button>
-        <button className="button">Etalase</button>
-        <button className="button">Laporan Penjualan</button>
-      </header>
+      <Header/>
       <div className="line" />
       <div className="flex justify-between items-center mb-8">
         <h2 className="titlepage">Etalase</h2>
@@ -200,27 +193,34 @@ export default function ManajemenPengguna() {
           <thead>
             <tr>
               <th className="border px-4 py-2">Nomor</th>
-              {/* <th className="border px-4 py-2">Customer ID</th> */}
-              <th className="border px-4 py-2">Nama Pengguna</th>
+              <th className="border px-4 py-2">Nama Pemesan</th>
               <th className="border px-4 py-2">Alamat</th>
               <th className="border px-4 py-2">Nomor Telp</th>
+              <th className="border px-4 py-2">Email</th>
+              <th className="border px-4 py-2">Metode Pembayaran</th>
+              <th className="border px-4 py-2">Metode Pengiriman</th>
+              <th className="border px-4 py-2">Status</th>
+              <th className="border px-4 py-2">Pesanan</th>
               <th className="border px-4 py-2">Aksi</th>
             </tr>
           </thead>
           <tbody>
-          {users?.map((item, index) => (
+          {orders?.map((item, index) => (
             <tr key={item.nomor}>
               <td className="border px-4 py-2">{index+1}</td>
-              {isEdit && selectedUser && selectedUser._id === item._id ? (
+              {isEdit && selectedOrder && selectedOrder._id === item._id ? (
                 <>
                   <td className="border px-4 py-2">
                     <input
                       type="text"
-                      value={selectedUser.name}
+                      value={selectedOrder.userId.username}
                       onChange={(e) =>
-                        setSelectedUser({
-                          ...selectedUser,
-                          name: e.target.value,
+                        setSelectedOrder({
+                          ...selectedOrder,
+                          userId: {
+                            ...selectedOrder.userId,
+                            username: e.target.value
+                          }
                         })
                       }
                     />
@@ -228,10 +228,10 @@ export default function ManajemenPengguna() {
                   <td className="border px-4 py-2">
                     <input
                       type="text"
-                      value={selectedUser.address}
+                      value={selectedOrder.address}
                       onChange={(e) =>
-                        setSelectedUser({
-                          ...selectedUser,
+                        setSelectedOrder({
+                          ...selectedOrder,
                           address: e.target.value,
                         })
                       }
@@ -240,15 +240,146 @@ export default function ManajemenPengguna() {
                   <td className="border px-4 py-2">
                     <input
                       type="number"
-                      value={selectedUser.telp}
+                      value={selectedOrder.phoneNumber}
                       onChange={(e) => {
                         const numericValue = e.target.value.replace(/[^0-9]/g, '');
-                        setSelectedUser({
-                          ...selectedUser,
-                          telp: numericValue,
+                        setSelectedOrder({
+                          ...selectedOrder,
+                          phoneNumber: numericValue,
                         });
                       }}
                     />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="text"
+                      value={selectedOrder.userId.email}
+                      onChange={(e) =>
+                        setSelectedOrder({
+                          ...selectedOrder,
+                          email: e.target.value,
+                        })
+                      }
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="text"
+                      value={selectedOrder.metodePembayaran}
+                      onChange={(e) =>
+                        setSelectedOrder({
+                          ...selectedOrder,
+                          metodePembayaran: e.target.value,
+                        })
+                      }
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="text"
+                      value={selectedOrder.metodePengiriman}
+                      onChange={(e) =>
+                        setSelectedOrder({
+                          ...selectedOrder,
+                          metodePengiriman: e.target.value,
+                        })
+                      }
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="text"
+                      value={selectedOrder.status}
+                      onChange={(e) =>
+                        setSelectedOrder({
+                          ...selectedOrder,
+                          status: e.target.value,
+                        })
+                      }
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <div className="space-y-1">
+                      {/* {item?.products.map((item,index) => {
+                        return (
+                          <div key={index} className=" min-w-[300px] flex flex-col bg-white p-2 rounded-xl shadow-md border border-black/20">
+                            <div className="flex flex-row"> */}
+                              {/* {`${item.productId.name} x${item.quantity}`} */}
+                              {/* <select className="w-full"
+                              onChange={(e) => {
+                                const selectedProduct = products.find((product) => product.name === e.target.value);
+                                const updatedProducts = selectedOrder.products.map((product) => {
+                                  if (product?.productId?._id === item?.productId?._id) {
+                                    return {
+                                      ...product,
+                                      productId: selectedProduct,
+                                    };
+                                  }
+                                  return product;
+                                });
+                                setSelectedOrder({
+                                  ...selectedOrder,
+                                  products: updatedProducts,
+                                });
+                              }}
+                              >
+                                {products?.map((product) => (
+                                  <option key={product._id} value={product}>
+                                    {`${product.name} - ${product.price}`}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                        );
+                      })} */}
+                      {/* add product selection */}
+                      {/* {isAdd && 
+                          <div className=" min-w-[300px] flex flex-col bg-white p-2 rounded-xl shadow-md border border-black/20">
+                            <div className="flex flex-row"><select className="w-full"
+                        onChange={(e) => {
+                          const selectedProduct = products.find((product) => product.name === e.target.value);
+                          const updatedProducts = [...selectedOrder.products, {
+                            productId: selectedProduct,
+                            quantity: 1,
+                            price: selectedProduct.price
+                          }];
+                          setSelectedOrder({
+                            ...selectedOrder,
+                            products: updatedProducts,
+                          });
+                        }}
+                      >
+                        {products?.map((product) => (
+                          <option key={product._id} value={product.name}>
+                            {`${product.name} - ${product.price}`}
+                          </option>
+                        ))}
+                      </select>
+                      </div>
+                      </div>} */}
+                            
+                      {/* <button 
+                        className="bg-sky-500 text-white px-4 !mt-2 py-1 w-full rounded-lg" 
+                        onClick={handleAddProduct}
+                      >
+                        + Add Product
+                      </button> */}
+                      <div className="space-y-1">
+                  {item?.products.map((item,index) => {
+                    return (
+                      <div key={index} className="flex flex-col bg-white p-2 rounded-xl shadow-md border border-black/20 min-w-[200px]">
+                        <p className="font-bold">{`${item?.productId?.name} x${item?.quantity}`}</p>
+                        <p>{`Rp ${item?.productId?.price.toLocaleString('id-ID')}`}</p>
+
+                      </div>
+                    );
+                  })}  
+                  <div className="flex flex-col bg-white p-2 rounded-xl shadow-md border border-black/20 font-bold">
+                    <p>{`Total: Rp ${item.total.toLocaleString('id-ID')}`}</p>
+                  </div>  
+                  </div>  
+                    </div>
                   </td>
                   <td className="border px-4 py-2">
                     <div className="flex flex-col items-center space-y-2">
@@ -263,9 +394,42 @@ export default function ManajemenPengguna() {
                 </>
               ) : (
                 <>
-                <TableCell>{item.name}</TableCell>
+                <TableCell>{item.userId.username}</TableCell>
                 <TableCell>{item.address}</TableCell>
-                <TableCell>{item.telp}</TableCell>
+                <TableCell>{item.phoneNumber}</TableCell>
+                <TableCell>{item.userId.email}</TableCell>
+                <TableCell>{item.metodePembayaran}</TableCell>
+                <TableCell>{item.metodePengiriman}</TableCell>
+                <TableCell>{<div>
+                  <select onChange={(e) =>
+                    handleUpdateStatus(item._id, e.target.value)}
+                    value={
+                      item.status
+                  }>
+                    <option value="pending">Pending</option>
+                    <option value="accepted">Accepted</option>
+                    <option value="rejected">Rejected</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                  </div>}</TableCell>
+                <TableCell>
+                  <div className="space-y-1">
+                  {item?.products.map((item,index) => {
+                    return (
+                      <div key={index} className="flex flex-col bg-white p-2 rounded-xl shadow-md border border-black/20 min-w-[200px]">
+                        <p className="font-bold">{`${item?.productId?.name} x${item?.quantity}`}</p>
+                        <p>{`Rp ${item?.productId?.price.toLocaleString('id-ID')}`}</p>
+
+                      </div>
+                    );
+                  })}  
+                  <div className="flex flex-col bg-white p-2 rounded-xl shadow-md border border-black/20 font-bold">
+                    <p>{`Total: Rp ${item.total.toLocaleString('id-ID')}`}</p>
+                  </div>  
+                  </div>             
+                  </TableCell>
                 <TableCell>
                   <ActionButtons 
                     onEdit={() => handleEdit(item)}

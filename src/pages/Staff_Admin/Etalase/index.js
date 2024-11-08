@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import './index.css';
+import Header from "../Header";
 
 function EtalaseAdmin() {
   const [products, setProducts] = useState([]);
@@ -222,15 +223,7 @@ function EtalaseAdmin() {
 
   return (
     <div className="background">
-      <header className="header-navbar">
-        <div className="header-title">
-          <h3 className="title">FORM ADMIN</h3>
-        </div>
-        <button className="button" onClick={handleDashboardAdmin}>Dashboard</button>
-        <button className="button" onClick={handleTransaksi}>Transaksi</button>
-        <button className="button">Etalase</button>
-        <button className="button">Laporan Penjualan</button>
-      </header>
+      <Header />
       <div className="line" />
       <div className="flex justify-between items-center mb-8">
         <h2 className="titlepage">Etalase</h2>

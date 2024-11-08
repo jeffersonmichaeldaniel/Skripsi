@@ -12,6 +12,9 @@ import DashboardAdmin from "./pages/Staff_Admin/DashBoardAdmin";
 import Transaksi from "./pages/Staff_Admin/Transaksi";
 import EtalaseAdmin from "./pages/Staff_Admin/Etalase";
 import ManajemenPengguna from "./pages/Staff_Admin/ManajemenPengguna";
+import ManajemenPesanan from "./pages/Staff_Admin/ManajemenPesanan";
+import EditPesanan from "./pages/Staff_Admin/EditPesanan";
+import LaporanPenjualan from "./pages/Staff_Admin/LaporanPenjualan";
 
 function App() {
   return (
@@ -29,6 +32,9 @@ function App() {
         <Route path='/Transaksi' element={<Transaksi />} />
         <Route path='/EtalaseAdmin' element={<EtalaseAdmin />} />
         <Route path="/ManajemenPengguna" element={<ManajemenPengguna />} />
+        <Route path="/ManajemenPesanan" element={<ManajemenPesanan />} />
+        <Route path="/EditPesanan/:id" element={<EditPesanan />} />
+        <Route path="/LaporanPenjualan" element={<LaporanPenjualan />} />
       </Routes>
     </Router>
   );

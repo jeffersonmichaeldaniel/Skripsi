@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
 import './index.css';
+import Header from "../Header";
 
 function DashboardAdmin() {
   const navigate = useNavigate();
@@ -14,15 +15,7 @@ function DashboardAdmin() {
 
   return (
     <div className="background">
-      <header className="header-navbar">
-        <div className="header-title">
-          <h3 className="title">FORM ADMIN</h3>
-        </div>
-        <button className="button">Dashboard</button>
-        <button className="button" onClick={navigasiTransaksi}>Transaksi</button>
-        <button className="button" onClick={navigasiEtalaseAdmin}>Etalase</button>
-        <button className="button">Laporan Penjualan</button>
-      </header>
+      <Header/>
       <div className="line" />
       <h2 className="titlepage">Dashboard</h2>
       <div className="grid grid-cols-3 gap-4">
