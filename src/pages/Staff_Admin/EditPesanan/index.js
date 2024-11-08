@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import './index.css';
 import { useParams } from 'react-router-dom';
+import Header from "../Header";
 
 const url = "https://joki-chuang.vercel.app";
 
@@ -171,15 +172,7 @@ export default function EditPesanan() {
   
   return (
     <div className="background">
-      <header className="header-navbar">
-        <div className="header-title">
-          <h3 className="title">FORM ADMIN - Edit Pesanan</h3>
-        </div>
-        <button className="button">Dashboard</button>
-        <button className="button">Transaksi</button>
-        <button className="button">Etalase</button>
-        <button className="button">Laporan Penjualan</button>
-      </header>
+      <Header/>
       <div className="line" />
       <div className="container h-full mx-auto">
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-y-4 gap-x-8 p-4">

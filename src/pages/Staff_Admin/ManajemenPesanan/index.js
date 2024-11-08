@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate,useParams } from 'react-router-dom';
 import './index.css';
+import Header from "../Header";
 
 const url = "https://joki-chuang.vercel.app";
 
@@ -55,7 +56,7 @@ export default function ManajemenPengguna() {
   const handleEdit = (item) => {
     console.log(item);
     
-    navigate(`/AddPesanan/${item._id}`)
+    navigate(`/EditPesanan/${item._id}`)
     // setSelectedOrder(product);
     // setIsEdit(true);
   };
@@ -116,6 +117,24 @@ export default function ManajemenPengguna() {
     }
   };
 
+  const handleUpdateStatus = async (id, status) => {
+    try {
+      const response = await fetch(`${url}/orders/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status }),
+      });
+      if (response.ok) {
+        fetchOrders();
+        alert("Status updated successfully");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
+
   const handleAddProduct = () => {
     if (!selectedOrder) {
       // Initialize selectedOrder with empty products array if none exists
@@ -153,15 +172,7 @@ export default function ManajemenPengguna() {
 
   return (
     <div className="background">
-      <header className="header-navbar">
-        <div className="header-title">
-          <h3 className="title">FORM ADMIN</h3>
-        </div>
-        <button className="button">Dashboard</button>
-        <button className="button">Transaksi</button>
-        <button className="button">Etalase</button>
-        <button className="button">Laporan Penjualan</button>
-      </header>
+      <Header/>
       <div className="line" />
       <div className="flex justify-between items-center mb-8">
         <h2 className="titlepage">Etalase</h2>
@@ -188,6 +199,7 @@ export default function ManajemenPengguna() {
               <th className="border px-4 py-2">Email</th>
               <th className="border px-4 py-2">Metode Pembayaran</th>
               <th className="border px-4 py-2">Metode Pengiriman</th>
+              <th className="border px-4 py-2">Status</th>
               <th className="border px-4 py-2">Pesanan</th>
               <th className="border px-4 py-2">Aksi</th>
             </tr>
@@ -270,6 +282,18 @@ export default function ManajemenPengguna() {
                         setSelectedOrder({
                           ...selectedOrder,
                           metodePengiriman: e.target.value,
+                        })
+                      }
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="text"
+                      value={selectedOrder.status}
+                      onChange={(e) =>
+                        setSelectedOrder({
+                          ...selectedOrder,
+                          status: e.target.value,
                         })
                       }
                     />
@@ -376,6 +400,20 @@ export default function ManajemenPengguna() {
                 <TableCell>{item.userId.email}</TableCell>
                 <TableCell>{item.metodePembayaran}</TableCell>
                 <TableCell>{item.metodePengiriman}</TableCell>
+                <TableCell>{<div>
+                  <select onChange={(e) =>
+                    handleUpdateStatus(item._id, e.target.value)}
+                    value={
+                      item.status
+                  }>
+                    <option value="pending">Pending</option>
+                    <option value="accepted">Accepted</option>
+                    <option value="rejected">Rejected</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                  </div>}</TableCell>
                 <TableCell>
                   <div className="space-y-1">
                   {item?.products.map((item,index) => {
