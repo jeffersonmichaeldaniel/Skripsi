@@ -6,7 +6,6 @@ html, body {
 
 .background {
     background-color: #194484;
-    height: 100vh; 
     width: 100%; 
     padding: 10px;
     box-sizing: border-box; /* Ensure padding does not increase the total width */
