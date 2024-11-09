@@ -4,8 +4,8 @@ export default function Header() {
   const navigate = useNavigate();
 
   const navItems = [
-    { label: 'Dashboard', path: '/Dashboard' },
-    { label: 'Transaksi', path: '/Transaksi' },
+    { label: 'Dashboard', path: '/DashboardAdmin' },
+    // { label: 'Transaksi', path: '/Transaksi' },
     { label: 'Laporan Penjualan', path: '/EtalaseAdmin' },
     { label: 'Manajemen Pengguna', path: '/ManajemenPengguna' },
     { label: 'Manajemen Pesanan', path: '/ManajemenPesanan' },
