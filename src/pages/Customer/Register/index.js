@@ -1,23 +1,18 @@
 import React, { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Register() {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
-    phoneNumber: "",
   });
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    // Limit phoneNumber input to digits only
-    if (name === "phoneNumber" && !/^\d*$/.test(value)) return;
-
     setFormData({
       ...formData,
       [name]: value,
@@ -27,7 +22,6 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Log data formulir ke konsol sebelum mengirim
     console.log("Data yang dikirim:", formData);
   
     try {
@@ -38,25 +32,26 @@ function Register() {
         },
         body: JSON.stringify(formData),
       });
-  
+      
+      console.log("Status respons:", response.status);
+      
       if (response.ok) {
-        console.log("Pendaftaran berhasil, data dikirim ke database:", formData);
         toast.success("Registrasi berhasil!", { position: "top-center" });
-        setFormData({ username: "", email: "", password: "", phoneNumber: "" });
+        setFormData({ username: "", email: "", password: "" });
   
-        // Delay selama 2 detik sebelum mengalihkan
         setTimeout(() => {
-          navigate("/Login");
+          navigate("/login");
         }, 2000);
       } else {
         const errorData = await response.json();
+        console.log("Pesan error:", errorData);
         toast.error(errorData.message || "Registrasi gagal", { position: "top-center" });
       }
     } catch (error) {
-      toast.error("Terjadi kesalahan. Silakan coba lagi.", { position: "top-center" });
+      console.error("Kesalahan jaringan:", error);
+      toast.error("Terjadi kesalahan jaringan. Silakan coba lagi.", { position: "top-center" });
     }
-  };
-  
+  };  
 
   return (
     <div>
@@ -66,10 +61,10 @@ function Register() {
           WELCOME TO FROZEN FISH SALES AND ORDERING SYSTEM
         </h1>
         <nav className="space-x-4">
-          <a href="#" className="hover:underline">Home</a>
-          <a href="#" className="hover:underline">Testimonial</a>
-          <a href="#" className="hover:underline">History</a>
-          <a href="#" className="hover:underline">Etalase</a>
+          <Link to="/" className="hover:underline">Home</Link>
+          <Link to="/testimonial" className="hover:underline">Testimonial</Link>
+          <Link to="/history" className="hover:underline">History</Link>
+          <Link to="/etalase" className="hover:underline">Etalase</Link>
         </nav>
         <div className="text-white">
           <i className="fas fa-user-circle text-2xl" />
@@ -85,7 +80,7 @@ function Register() {
           </h2>
           <p className="text-white mb-6">
             Already have an account on this website?{" "}
-            <a href="/login" className="underline">Log in</a>
+            <Link to="/login" className="underline">Log in</Link>
           </p>
           <form onSubmit={handleSubmit}>
             <input
@@ -109,14 +104,6 @@ function Register() {
               name="password"
               placeholder="Password"
               value={formData.password}
-              onChange={handleInputChange}
-              className="block w-full p-3 mb-4 bg-gray-300 rounded"
-            />
-            <input
-              type="tel"
-              name="phoneNumber"
-              placeholder="Phone number"
-              value={formData.phoneNumber}
               onChange={handleInputChange}
               className="block w-full p-3 mb-4 bg-gray-300 rounded"
             />
