@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function Login() {
   const navigate = useNavigate();
@@ -31,12 +31,14 @@ function Login() {
         return;
       }
 
-      if (data.token) { // Asumsikan API mengembalikan token jika login berhasil
-        localStorage.setItem('token', data.token); // Simpan token ke localStorage
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        const decodedToken = JSON.parse(atob(data.token.split('.')[1]));
+        const userId = decodedToken.id;
+        localStorage.setItem('userId', userId);
         navigate('/Dashboard');
-      } else {
-        setError('Email atau password tidak valid');
       }
+      
     } catch (err) {
       setError('Terjadi kesalahan, coba lagi nanti');
     }
@@ -98,10 +100,10 @@ function Login() {
             </div>
             <div className="text-center">
               <p className="text-sm">
-                Belum punya akun?
-                <a href="/register" className="hover:underline">
+                Belum punya akun?{" "}
+                <Link to="/register" className="hover:underline">
                   Daftar
-                </a>
+                </Link>
               </p>
             </div>
           </form>

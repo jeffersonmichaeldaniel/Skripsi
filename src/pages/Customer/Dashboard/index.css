@@ -48,3 +48,16 @@ main{
 .fas{
     font-size: 20px;
 }
+
+.w-full{
+    border-radius: 10px;
+}
+
+.text-center{
+    color: #000;
+    font-weight: bold;
+}
+
+.block{
+    margin-bottom: 30px;
+}

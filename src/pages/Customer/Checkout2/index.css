@@ -1,0 +1,11 @@
+.background{
+    background-color: #1D4ED8;
+    overflow-y: auto;
+}
+
+/* Tambahkan di file index.css */
+.scrollable-container {
+    max-height: 80vh; /* Atur tinggi maksimal kontainer */
+    overflow-y: auto; /* Mengaktifkan scrolling vertikal */
+  }
+  

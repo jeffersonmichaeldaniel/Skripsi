@@ -1,35 +1,42 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
+import "./index.css";
 
 function Etalase() {
-  const location = useLocation();
   const navigate = useNavigate();
-  const { product } = location.state || {}; // Mengakses produk yang dikirim dari Dashboard
-  const [count, setCount] = useState(0);
+  const [cart, setCart] = useState([]);
 
-  const increment = () => {
-    setCount((prevCount) => prevCount + 1);
+  useEffect(() => {
+    // Ambil data keranjang dari localStorage setiap kali halaman dimuat
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCart(storedCart);
+  }, []);
+
+  const incrementQuantity = (index) => {
+    const newCart = [...cart];
+    newCart[index].quantity += 1;
+    setCart(newCart);
+    localStorage.setItem("cart", JSON.stringify(newCart)); // Simpan perubahan ke localStorage
   };
 
-  const decrement = () => {
-    setCount((prevCount) => (prevCount > 0 ? prevCount - 1 : 0));
+  const decrementQuantity = (index) => {
+    const newCart = [...cart];
+    if (newCart[index].quantity > 1) {
+      newCart[index].quantity -= 1;
+      setCart(newCart);
+      localStorage.setItem("cart", JSON.stringify(newCart)); // Simpan perubahan ke localStorage
+    }
   };
 
-  const handleAddToCart = () => {
-    // Hitung total harga
-    const totalPrice = count * product.price;
+  const removeProduct = (index) => {
+    const newCart = cart.filter((_, i) => i !== index);
+    setCart(newCart);
+    localStorage.setItem("cart", JSON.stringify(newCart)); // Simpan perubahan ke localStorage
+  };
 
-    // Kirim data produk ke halaman Checkout
+  const handleCheckout = () => {
     navigate('/Checkout', {
-      state: {
-        product: {
-          image: product.image,
-          name: product.name,
-          quantity: count,
-          price: product.price,
-          total: totalPrice
-        }
-      }
+      state: { cart }
     });
   };
 
@@ -47,50 +54,60 @@ function Etalase() {
         <a className="hover:underline" href="#">Etalase</a>
         <i className="fas fa-user-circle text-2xl"></i>
       </nav>
-      <main className="flex justify-center items-center py-8">
-        <div className="text-center">
-          {product && (
-            <>
-              <h2 className="bg-blue-600 text-white py-2 px-4 rounded">
-                {product.name}
-              </h2>
-              <img
-                alt={`Image of ${product.name}`}
-                className="rounded-full mt-4"
-                height={300}
-                src={product.image}
-                width={300}
-              />
-            </>
-          )}
-        </div>
-        <div className="bg-white p-8 rounded shadow-lg ml-8">
-          <h3 className="text-2xl font-bold mb-4">Informasi Produk</h3>
-          <div className="flex justify-between mb-2">
-            <span>Stok</span>
-            <span>{product ? `${product.stock} Box` : 'N/A'}</span>
+      <main className="py-8">
+        {cart.length === 0 ? (
+          <p className="text-center text-lg">Keranjang Anda kosong.</p>
+        ) : (
+          <div className="flex flex-wrap justify-center">
+            {cart.map((product, index) => (
+              <div key={index} className="bg-white p-4 m-4 rounded shadow-lg text-center">
+                <img
+                  alt={`Image of ${product.name}`}
+                  className="rounded-full"
+                  height={150}
+                  src={product.image}
+                  width={150}
+                />
+                <h3 className="text-xl font-bold mt-4">{product.name}</h3>
+                <p>Stok: {product.stock}Box</p>
+                <p>Harga: Rp. {product.price} / 1 box</p>
+                <p>Jumlah Ikan: {product.quantity} box</p>
+                <div className="flex justify-center items-center mt-4">
+                  <button
+                    className="bg-blue-600 text-white px-4 py-2 rounded-l"
+                    onClick={() => decrementQuantity(index)}
+                  >
+                    -
+                  </button>
+                  <span className="px-4">{product.quantity}</span>
+                  <button
+                    className="bg-blue-600 text-white px-4 py-2 rounded-r"
+                    onClick={() => incrementQuantity(index)}
+                  >
+                    +
+                  </button>
+                </div>
+                <button
+                  className="bg-red-600 text-white px-4 py-2 rounded mt-4"
+                  onClick={() => removeProduct(index)}
+                >
+                  Hapus Produk
+                </button>
+              </div>
+            ))}
           </div>
-          <div className="flex justify-between mb-2">
-            <span>Harga</span>
-            <span>{product ? `Rp. ${product.price} / 1 box` : 'N/A'}</span>
-          </div>
-          <div className="flex justify-between mb-4">
-            <span>Jumlah Ikan</span>
-            <span>{count} Box</span>
-          </div>
-          <div className="flex items-center justify-center mb-4">
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-l" onClick={increment}>+</button>
-            <span className="px-4">{count}</span>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-r" onClick={decrement}>-</button>
-          </div>
-          <div className="flex justify-between">
-            <button className="bg-blue-600 text-white px-4 py-2 rounded flex items-center" onClick={handleAddToCart}>
-              <i className="fas fa-shopping-cart mr-2"></i>
-              Tambahkan ke Keranjang
+        )}
+
+        {cart.length > 0 && (
+          <div className="text-center mt-8">
+            <button
+              className="bg-blue-600 text-white px-8 py-4 rounded"
+              onClick={handleCheckout}
+            >
+              Lanjutkan ke Checkout
             </button>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded">Checkout</button>
           </div>
-        </div>
+        )}
       </main>
     </div>
   );

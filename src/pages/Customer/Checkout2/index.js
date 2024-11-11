@@ -1,16 +1,48 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import "./index.css";
 
 function Checkout2() {
-  // Data dummy sebagai pengganti basis data
-  const product = {
-    name: "Ikan Salmon",
-    image: "https://via.placeholder.com/100", // URL gambar dummy
-    quantity: 2, // Kuantitas produk
-    price: 75000, // Harga per kg
+  const [orders, setOrders] = useState([]);
+  const userId = localStorage.getItem("userId");
+
+  const fetchProductDetails = async (productId) => {
+    try {
+      const response = await fetch(`https://joki-chuang.vercel.app/products/${productId}`);
+      const productData = await response.json();
+      return productData;
+    } catch (error) {
+      console.error("Error fetching product details:", error);
+    }
   };
 
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await fetch("https://joki-chuang.vercel.app/orders");
+        if (response.ok) {
+          const data = await response.json();
+          const userOrders = data.filter((order) => order.userId === userId);
+
+          for (const order of userOrders) {
+            for (const product of order.products) {
+              const productDetails = await fetchProductDetails(product.productId);
+              product.name = productDetails.name;
+              product.image = productDetails.image;
+              product.price = productDetails.price; // Hanya perbarui nama, gambar, dan harga
+            }
+          }
+          setOrders(userOrders);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    fetchOrders();
+  }, [userId]);
+
   return (
-    <div>
+    <div className="background">
       <header className="header-title">
         <div className="container mx-auto flex justify-between items-center">
           <h1 className="text-lg font-bold">
@@ -19,56 +51,38 @@ function Checkout2() {
           <nav className="space-x-4">
             <a href="/Dashboard" className="hover:underline">Home</a>
             <a href="/History" className="hover:underline">History</a>
-            <a href="#" className="hover:underline">
-              Etalase
-            </a>
-            <a href="#">
-              <i className="fas fa-shopping-cart cart-icon"></i>
-            </a>
-            <a href="#">
-              <i className="fas fa-user-circle" />
-            </a>
+            <a href="#" className="hover:underline">Etalase</a>
+            <a href="#"><i className="fas fa-shopping-cart cart-icon"></i></a>
+            <a href="#"><i className="fas fa-user-circle" /></a>
           </nav>
         </div>
       </header>
-      <div className="p-8 bg-blue-700">
+      <div className="p-8 bg-blue-700 scrollable-container">
         <div className="grid grid-cols-5 gap-4 text-center text-lg font-semibold mb-4">
           <div className="bg-blue-500 p-2">Gambar Produk</div>
           <div className="bg-blue-500 p-2">Nama</div>
           <div className="bg-blue-500 p-2">Kuantitas</div>
-          <div className="bg-blue-500 p-2">Harga (Rp) / Kg</div>
-          <div className="bg-blue-500 p-2">Total (Rp)</div>
+          <div className="bg-blue-500 p-2">Price</div>
         </div>
-        {product && (
-          <div className="grid grid-cols-5 gap-4 items-center text-center mb-4">
-            <div className="flex justify-center">
-              <img
-                alt={`Image of ${product.name}`}
-                className="rounded-full"
-                height={100}
-                src={product.image}
-                width={100}
-              />
+
+        {orders.map((order) =>
+          order.products.map((product, index) => (
+            <div key={index} className="grid grid-cols-5 gap-4 items-center text-center mb-4">
+              <div className="flex justify-center">
+                <img
+                  alt={`Image of ${product.name}`}
+                  className="rounded-full"
+                  height={100}
+                  src={product.image}
+                  width={100}
+                />
+              </div>
+              <div>{product.name}</div>
+              <div>{product.quantity}</div>
+              <div>{product.price}</div>
             </div>
-            <div>{product.name}</div>
-            <div>{product.quantity}</div>
-            <div>{product.price.toLocaleString()}</div>
-            <div>{(product.price * product.quantity).toLocaleString()}</div>
-          </div>
+          ))
         )}
-        <hr className="border-gray-400 mb-4" />
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-blue-500 p-4">
-            <h2 className="font-semibold mb-2">Informasi Total Produk :</h2>
-            <div className="bg-blue-600 p-2 mb-2">
-              <h3>Sub Total: Rp. {(product.price * product.quantity).toLocaleString()}</h3>
-            </div>
-            <div className="bg-blue-600 p-2 mb-2">Ongkir: Rp. 10.000</div>
-            <div className="bg-blue-600 p-2">
-              <h3>Total: Rp. {((product.price * product.quantity) + 10000).toLocaleString()}</h3>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
