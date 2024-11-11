@@ -4,7 +4,7 @@ import './index.css';
 import { useParams } from 'react-router-dom';
 import Header from "../Header";
 
-const url = "https://joki-chuang.vercel.app";
+const url = "https://vjay-chuang.vercel.app";
 
 export default function EditPesanan() {
   const [products, setProducts] = useState([]);

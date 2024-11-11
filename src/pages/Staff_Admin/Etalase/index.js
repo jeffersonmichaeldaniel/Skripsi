@@ -67,10 +67,10 @@ function EtalaseAdmin() {
     },
   ];
 
-  //hit api get data "https://joki-chuang.vercel.app/products" 
+  //hit api get data "https://vjay-chuang.vercel.app/products" 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("https://joki-chuang.vercel.app/products");
+      const response = await fetch("https://vjay-chuang.vercel.app/products");
       const data = await response.json();
       setProducts(data);
     } catch (error) {
@@ -84,7 +84,7 @@ function EtalaseAdmin() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`https://joki-chuang.vercel.app/products/${id}`, {
+      const response = await fetch(`https://vjay-chuang.vercel.app/products/${id}`, {
         method: "DELETE",
       });
       if (response.ok) {
@@ -138,7 +138,7 @@ function EtalaseAdmin() {
         productToUpdate.image = base64Image;
       }
   
-      const response = await fetch(`https://joki-chuang.vercel.app/products/${selectedProduct._id}`, {
+      const response = await fetch(`https://vjay-chuang.vercel.app/products/${selectedProduct._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -171,7 +171,7 @@ function EtalaseAdmin() {
         productToAdd.image = base64Image;
       }
 
-      const response = await fetch("https://joki-chuang.vercel.app/products", {
+      const response = await fetch("https://vjay-chuang.vercel.app/products", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

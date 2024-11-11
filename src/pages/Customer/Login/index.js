@@ -16,7 +16,7 @@ function Login() {
     }
 
     try {
-      const response = await fetch('https://joki-chuang.vercel.app/users/login', {
+      const response = await fetch('https://vjay-chuang.vercel.app/users/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

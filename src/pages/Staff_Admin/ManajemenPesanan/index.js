@@ -4,7 +4,7 @@ import { useNavigate,useParams } from 'react-router-dom';
 import './index.css';
 import Header from "../Header";
 
-const url = "https://joki-chuang.vercel.app";
+const url = "https://vjay-chuang.vercel.app";
 
 export default function ManajemenPengguna() {
   const navigate = useNavigate()  

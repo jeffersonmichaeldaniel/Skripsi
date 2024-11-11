@@ -18,7 +18,7 @@ function Dashboard() {
     // Fetch products from the API
     const fetchProducts = async () => {
       try {
-        const response = await fetch('https://joki-chuang.vercel.app/products');
+        const response = await fetch('https://vjay-chuang.vercel.app/products');
         const data = await response.json();
         setProducts(data);
       } catch (error) {
