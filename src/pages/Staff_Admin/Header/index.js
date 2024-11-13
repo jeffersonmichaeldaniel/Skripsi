@@ -9,6 +9,7 @@ export default function Header() {
     { label: 'Laporan Penjualan', path: '/EtalaseAdmin' },
     { label: 'Manajemen Pengguna', path: '/ManajemenPengguna' },
     { label: 'Manajemen Pesanan', path: '/ManajemenPesanan' },
+    { label: 'Logout', path: '/' },
   ];
 
   return (
@@ -20,7 +21,7 @@ export default function Header() {
         {navItems.map((item) => (
           <button
             key={item.label}
-            className="button whitespace-nowrap"
+            className={`button whitespace-nowrap ${item.label === 'Logout' ? 'bg-red-500' : ''}`}
             onClick={() => navigate(item.path)}
           >
             {item.label}

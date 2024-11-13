@@ -5,6 +5,7 @@ import './index.css';
 import Header from "../Header";
 
 const url = "https://vjay-chuang.vercel.app";
+// const url = "http://localhost:5000";
 
 export default function ManajemenPengguna() {
   const navigate = useNavigate()  
@@ -13,10 +14,11 @@ export default function ManajemenPengguna() {
   const [isEdit, setIsEdit] = useState(false);
   const [isAdd, setIsAdd] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const fetchOrders = async () => {
+  const fetchOrders = async (searchTerm) => {
     try {
-      const response = await fetch(`${url}/orders/detailed`);
+      const response = await fetch(`${url}/orders/detailed${searchTerm ? `?search=${searchTerm}` : ""}`);
       const data = await response.json();
       setOrders(data);
     } catch (error) {
@@ -35,9 +37,9 @@ export default function ManajemenPengguna() {
   };
 
   useEffect(() => {
-    fetchOrders();
+    fetchOrders(searchTerm);
     fetchProducts();
-  }, []);
+  }, [searchTerm]);
 
   const handleDelete = async (id) => {
     try {
@@ -183,7 +185,7 @@ export default function ManajemenPengguna() {
           <input className="input-angka" />
           <h3 className="title" id="entries">Entries</h3>
           <h3 className="title">Search</h3>
-          <input className="input-search" />
+          <input className="input-search" onChange={(event) => setSearchTerm(event.target.value)} />
           <button onClick={() => 
     setIsAdd(true)}>
             <i className="fas fa-plus"></i>
@@ -400,20 +402,31 @@ export default function ManajemenPengguna() {
                 <TableCell>{item.userId?.email}</TableCell>
                 <TableCell>{item.metodePembayaran}</TableCell>
                 <TableCell>{item.metodePengiriman}</TableCell>
-                <TableCell>{<div>
-                  <select onChange={(e) =>
-                    handleUpdateStatus(item._id, e.target.value)}
-                    value={
-                      item.status
-                  }>
-                    <option value="pending">Pending</option>
-                    <option value="accepted">Accepted</option>
-                    <option value="rejected">Rejected</option>
-                    <option value="shipped">Shipped</option>
-                    <option value="delivered">Delivered</option>
-                    <option value="completed">Completed</option>
-                  </select>
-                  </div>}</TableCell>
+                <TableCell>
+                <select 
+                  onChange={(e) => handleUpdateStatus(item._id, e.target.value)}
+                  value={item.status}
+                  className="p-1 rounded-md"
+                  style={{
+                    backgroundColor: 
+                      item.status === "pending" ? "#FEF3C7" :    // Warm yellow
+                      item.status === "accepted" ? "#BFDBFE" :    // Light blue
+                      item.status === "canceled" ? "#FEE2E2" :    // Light red
+                      item.status === "shipped" ? "#D1FAE5" :     // Light green
+                      item.status === "delivered" ? "#C7D2FE" :   // Light purple
+                      item.status === "completed" ? "#A7F3D0" :   // Mint green
+                      "white",
+                      height: "100%"
+                  }}
+                >
+                  <option value="pending" style={{backgroundColor: "#FEF3C7"}}>Pending</option>
+                  <option value="accepted" style={{backgroundColor: "#BFDBFE"}}>Accepted</option>
+                  <option value="canceled" style={{backgroundColor: "#FEE2E2"}}>Canceled</option>
+                  <option value="shipped" style={{backgroundColor: "#D1FAE5"}}>Shipped</option>
+                  <option value="delivered" style={{backgroundColor: "#C7D2FE"}}>Delivered</option>
+                  <option value="completed" style={{backgroundColor: "#A7F3D0"}}>Completed</option>
+                </select>
+                </TableCell>
                 <TableCell>
                   <div className="space-y-1">
                   {item?.products.map((item,index) => {

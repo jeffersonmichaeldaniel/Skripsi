@@ -6,6 +6,7 @@ import Header from "../Header";
 
 
 const url = "https://vjay-chuang.vercel.app";
+// const url = "http://localhost:5000";
 export default function ManajemenPengguna() {
   const [users, setUsers] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -16,10 +17,11 @@ export default function ManajemenPengguna() {
     role: "",
   });
   const [selectedUser, setSelectedUser] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (searchTerm = "") => {
     try {
-      const response = await fetch(`${url}/users`);
+      const response = await fetch(`${url}/users${searchTerm ? `?search=${searchTerm}` : ""}`);
       const data = await response.json();
       setUsers(data);
     } catch (error) {
@@ -28,8 +30,8 @@ export default function ManajemenPengguna() {
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    fetchUsers(searchTerm);
+  }, [searchTerm]);
 
   const handleDelete = async (id) => {
     try {
@@ -183,7 +185,7 @@ export default function ManajemenPengguna() {
           <input className="input-angka" />
           <h3 className="title" id="entries">Entries</h3>
           <h3 className="title">Search</h3>
-          <input className="input-search" />
+          <input className="input-search" onChange={(event) => setSearchTerm(event.target.value)} />
           <button onClick={() => 
     setIsAdd(true)}>
             <i className="fas fa-plus"></i>
@@ -196,7 +198,6 @@ export default function ManajemenPengguna() {
               {/* <th className="border px-4 py-2">Customer ID</th> */}
               <th className="border px-4 py-2">Nama Pengguna</th>
               <th className="border px-4 py-2">Email</th>
-              <th className="border px-4 py-2">Nomor Telp</th>
               <th className="border px-4 py-2">Aksi</th>
             </tr>
           </thead>
@@ -231,18 +232,6 @@ export default function ManajemenPengguna() {
                     />
                   </td>
                   <td className="border px-4 py-2">
-                    <input
-                      type="text"
-                      value={selectedUser.phoneNumber}
-                      onChange={(e) => {
-                        setSelectedUser({
-                          ...selectedUser,
-                          role: e.target.value,
-                        });
-                      }}
-                    />
-                  </td>
-                  <td className="border px-4 py-2">
                     <div className="flex flex-col items-center space-y-2">
                       <button className="bg-blue-500 text-white px-4 py-2 w-full rounded" onClick={() => handleSave()}>
                         Save
@@ -257,7 +246,6 @@ export default function ManajemenPengguna() {
                 <>
                 <TableCell>{item.username}</TableCell>
                 <TableCell>{item.email}</TableCell>
-                <TableCell>{item.phoneNumber}</TableCell>
                 <TableCell>
                   <ActionButtons 
                     onEdit={() => handleEdit(item)}
